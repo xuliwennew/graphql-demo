@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>graphql demo </title>
+</head>
+<body>
+
+<div id="app">
+    <h1>{{user.name}}</h1>
+</div>
+
+<script src="lib/vue.js"></script>
+<script>
+    (function () {
+
+        new Vue({
+            el:"#app",
+            data:{
+                user:{}
+            },
+            created(){
+              this.initData()
+            },
+            methods:{
+                initData(){
+                    let query = `mutation createUser($input:UserInput) {
+                     createUser(input:$input) {
+                        name,
+                        age,
+                        sex
+                     }
+                }`
+
+                    fetch("http://localhost:8089/graphql",{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            query:query,
+                            variables:{input:{name:"zs",age:200,sex:"male"}}
+                        })
+                    }).then(response=>{
+                        response.json().then(data=>{
+                            this.user= data.data.createUser
+                            console.log(data.data)
+                        })
+                    })
+                }
+            }
+        })
+
+
+
+    })()
+</script>
+
+</body>
+</html>
